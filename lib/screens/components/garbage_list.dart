@@ -1,18 +1,23 @@
-import 'package:deep_waste/constants/size_config.dart';
-import 'package:deep_waste/database_manager.dart';
-import 'package:deep_waste/models/Item.dart';
 import 'package:flutter/material.dart';
+import 'package:garbage_manager/constants/size_config.dart';
+import 'package:garbage_manager/database_manager.dart';
+import 'package:garbage_manager/models/Item.dart';
 
-import 'item_card.dart';
+import 'garbage_item_widget.dart';
 
-class Items extends StatefulWidget {
+class GarbageItemList extends StatefulWidget {
+  final String predictedItem;
+
+  const GarbageItemList({Key key, this.predictedItem}) : super(key: key);
+
   @override
-  _ItemsState createState() => _ItemsState();
+  _GarbageItemListState createState() => _GarbageItemListState();
 }
 
-class _ItemsState extends State<Items> {
+class _GarbageItemListState extends State<GarbageItemList> {
   @override
   Widget build(BuildContext context) {
+    print("Predicted item is: ${widget.predictedItem}");
     return Container(
         padding: EdgeInsets.only(top: getProportionateScreenWidth(10)),
         child: FutureBuilder<List<Item>>(
@@ -28,7 +33,8 @@ class _ItemsState extends State<Items> {
                       children: snapshot.data?.map((item) {
                         return Padding(
                             padding: EdgeInsets.only(top: 5, bottom: 5),
-                            child: Container(
+                            child: AnimatedContainer(
+                                duration: Duration(seconds: 1),
                                 decoration: BoxDecoration(
                                   border: Border.all(color: Colors.black12),
                                   borderRadius: BorderRadius.circular(8.0),
@@ -40,7 +46,14 @@ class _ItemsState extends State<Items> {
                                       offset: Offset(
                                           3, 3), // changes position of shadow
                                     ),
+                                    widget.predictedItem.toLowerCase() == item.name.toLowerCase() ?
                                     BoxShadow(
+                                      color: Colors.yellow.shade50,
+                                      spreadRadius: 2,
+                                      blurRadius: 5,
+                                      offset: Offset(
+                                          3, 3), // changes position of shadow
+                                    ):BoxShadow(
                                       color: Colors.white,
                                       offset: const Offset(0.0, 0.0),
                                       blurRadius: 0.0,
@@ -48,7 +61,7 @@ class _ItemsState extends State<Items> {
                                     ),
                                   ], //add it here
                                 ),
-                                child: ItemCard(item: item)));
+                                child: GarbageItem(item: item)));
                       })?.toList(),
                     );
             }));

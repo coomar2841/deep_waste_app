@@ -1,18 +1,22 @@
 import 'package:flutter/material.dart';
 
-showAlert({BuildContext bContext, String title, String content}) {
+showAlert(
+    {BuildContext bContext,
+    String title,
+    String content,
+    VoidCallback callback}) {
   return showDialog(
       context: bContext,
       builder: (BuildContext context) {
         return AlertDialog(
           title: Text(
-            title ?? "",
-            style: TextStyle(color: Colors.white),
+            title ?? ""
           ),
           content: Text(content ?? ""),
           actions: [
             TextButton(
-                onPressed: () => {Navigator.pop(context)}, child: Text("Ok"))
+                onPressed: () => {Navigator.pop(context), callback()},
+                child: Text("Ok"))
           ],
         );
       });

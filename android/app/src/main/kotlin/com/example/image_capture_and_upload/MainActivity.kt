@@ -1,4 +1,4 @@
-package com.hai.deep_waste
+package com.nagarro.garbage.manager
 
 import io.flutter.embedding.android.FlutterActivity
 

@@ -1,6 +1,6 @@
 {
-    "name": "Deep Waste",
-    "short_name": "Deep Waste",
+    "name": "Garbage Manager",
+    "short_name": "Garbage Manager",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",

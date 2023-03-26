@@ -1,5 +1,5 @@
 import 'dart:collection';
-import 'package:deep_waste/models/Category.dart';
+import 'package:garbage_manager/models/Category.dart';
 import 'package:flutter/material.dart';
 
 class CategoryNotifier extends ChangeNotifier {

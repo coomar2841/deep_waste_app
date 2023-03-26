@@ -1,8 +1,8 @@
 
 import 'package:camera/camera.dart';
-import 'package:deep_waste/controller/category_notifier.dart';
-import 'package:deep_waste/controller/item_notifier.dart';
-import 'package:deep_waste/screens/HomeScreen.dart';
+import 'package:garbage_manager/controller/category_notifier.dart';
+import 'package:garbage_manager/controller/item_notifier.dart';
+import 'package:garbage_manager/screens/home.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
@@ -30,7 +30,7 @@ class MyApp extends StatelessWidget {
         ],
         child: MaterialApp(
           debugShowCheckedModeBanner: false,
-          title: 'Deep Waste',
+          title: 'Garbage Manager',
           theme: ThemeData(
             appBarTheme: AppBarTheme(
                 backgroundColor: Colors.white,

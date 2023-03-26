@@ -1,12 +1,12 @@
 import 'dart:io';
-import 'package:deep_waste/models/Category.dart';
-import 'package:deep_waste/models/Item.dart';
+import 'package:garbage_manager/models/Category.dart';
+import 'package:garbage_manager/models/Item.dart';
 import 'package:flutter/services.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 
 class DatabaseManager {
-  static final _dbName = "deepwaste.db";
+  static final _dbName = "garbage_manager.db";
   // Use this class as a singleton
   DatabaseManager._privateConstructor();
   static final DatabaseManager instance = DatabaseManager._privateConstructor();

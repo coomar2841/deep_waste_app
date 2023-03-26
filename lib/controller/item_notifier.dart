@@ -1,5 +1,5 @@
 import 'dart:collection';
-import 'package:deep_waste/models/Item.dart';
+import 'package:garbage_manager/models/Item.dart';
 import 'package:flutter/material.dart';
 
 class ItemNotifier extends ChangeNotifier {

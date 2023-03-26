@@ -1,24 +1,21 @@
 import 'dart:io';
 
-import 'package:deep_waste/constants/app_properties.dart';
-import 'package:deep_waste/constants/size_config.dart';
-import 'package:deep_waste/database_manager.dart';
-import 'package:deep_waste/main.dart';
-import 'package:deep_waste/models/Item.dart';
 import 'package:fab_circular_menu/fab_circular_menu.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
+import 'package:garbage_manager/constants/app_properties.dart';
+import 'package:garbage_manager/constants/size_config.dart';
+import 'package:garbage_manager/database_manager.dart';
+import 'package:garbage_manager/models/Item.dart';
+import 'package:garbage_manager/screens/components/garbage_list.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:tflite/tflite.dart';
 
-import '../realtime/real_time_detection.dart';
 import '../utils.dart';
 import 'components/alert.dart';
-import 'components/history.dart';
 
 class HomeScreen extends StatefulWidget {
-
   HomeScreen({Key key, this.title}) : super(key: key);
   final String title;
 
@@ -30,6 +27,7 @@ class _HomeScreenState extends State<HomeScreen> {
   List<Item> _items = [];
 
   ImagePicker _imagePicker = ImagePicker();
+  String predictedResult = "";
 
   @override
   void initState() {
@@ -49,7 +47,7 @@ class _HomeScreenState extends State<HomeScreen> {
   _imageFromCamera() async {
     try {
       PickedFile capturedImage =
-      await _imagePicker.getImage(source: ImageSource.camera);
+          await _imagePicker.getImage(source: ImageSource.camera);
       final File imagePath = File(capturedImage.path);
       if (capturedImage == null) {
         showAlert(
@@ -67,7 +65,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   _imageFromGallery() async {
     PickedFile uploadedImage =
-    await _imagePicker.getImage(source: ImageSource.gallery);
+        await _imagePicker.getImage(source: ImageSource.gallery);
     final File imagePath = File(uploadedImage.path);
 
     if (uploadedImage == null) {
@@ -78,11 +76,6 @@ class _HomeScreenState extends State<HomeScreen> {
     } else {
       _uploadImage(imagePath);
     }
-  }
-
-  _realTimeDetection() async {
-    Navigator.push(
-        context, MaterialPageRoute(builder: (context) => RealTimeDetectionWidget(cameras)));
   }
 
   Future _loadModel() async {
@@ -109,20 +102,25 @@ class _HomeScreenState extends State<HomeScreen> {
     EasyLoading.dismiss();
     var result = output[0];
     var confidence = getNumber(result['confidence'], precision: 2);
-    final predictedResult = result['label'];
+
+    predictedResult = result['label'];
     await _updateItem(_items, predictedResult);
 
     showAlert(
         bContext: context,
-        title: "Done!",
-        content: "Predicted ${result['label']} with ${confidence * 100}% confidence.");
-    setState(() {
-    });
+        title: "Result",
+        content: "Put it in collection point: ${predictedResult.toUpperCase()}.\n\n"
+            "Predicted with ${confidence * 100}% confidence",
+        callback: () {
+          setState(() {
+            predictedResult = result['label'];
+          });
+        });
   }
 
   Future _updateItem(List<Item> items, String itemName) async {
     var matchedItem = items.firstWhere(
-            (_item) => _item.name.toLowerCase() == itemName,
+        (_item) => _item.name.toLowerCase() == itemName,
         orElse: () => null);
     matchedItem.count = matchedItem.count + 1;
     await DatabaseManager.instance.updateItem(matchedItem);
@@ -133,6 +131,8 @@ class _HomeScreenState extends State<HomeScreen> {
     SizeConfig().init(context);
     return Scaffold(
       backgroundColor: white,
+      appBar: AppBar(
+          title: Text("Collection Points"), elevation: 0, centerTitle: true),
       floatingActionButton: FabCircularMenu(
           ringDiameter: getProportionateScreenWidth(130.0),
           ringColor: Color(0xff69c0dc),
@@ -151,14 +151,16 @@ class _HomeScreenState extends State<HomeScreen> {
                 onPressed: () => _imageFromCamera()),
             IconButton(
                 icon: Icon(Icons.folder), onPressed: () => _imageFromGallery()),
-            IconButton(
-                icon: Icon(Icons.camera_alt),
-                onPressed: () => _realTimeDetection())
           ]),
       body: SafeArea(
           child: SingleChildScrollView(
               child: Column(children: [
-        History(),
+        Padding(
+            padding: EdgeInsets.symmetric(
+                horizontal: getProportionateScreenWidth(20)),
+            child: GarbageItemList(
+              predictedItem: predictedResult,
+            )),
         SizedBox(width: getProportionateScreenWidth(20)),
       ]))),
     );
